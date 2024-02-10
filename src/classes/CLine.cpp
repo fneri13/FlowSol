@@ -14,11 +14,19 @@ CLine::CLine(CPoint p1, CPoint p2) {
     length = sqrt(dx * dx + dy * dy + dz * dz);
     
     if (length != 0.0) {
-        direction_vector.push_back(dx / length);
-        direction_vector.push_back(dy / length);
-        direction_vector.push_back(dz / length);
+        versor.push_back(dx / length);
+        versor.push_back(dy / length);
+        versor.push_back(dz / length);
+
+        direction_vector.push_back(dx);
+        direction_vector.push_back(dy);
+        direction_vector.push_back(dz);
     } else {
         // Handle the case where the length is zero (to avoid division by zero)
+        versor.push_back(0.0);
+        versor.push_back(0.0);
+        versor.push_back(0.0);
+        
         direction_vector.push_back(0.0);
         direction_vector.push_back(0.0);
         direction_vector.push_back(0.0);
@@ -50,11 +58,15 @@ void CLine::print_info() const {
     std::cout << "Midpoint: ";
     mid_point.printInfo();
     std::cout << "Length: " << length << "\n";
-    std::cout << "Direction: (" << direction_vector[0] << ", " << direction_vector[1] << ", " << direction_vector[2] << ")" << std::endl;
+    std::cout << "Versor: (" << versor[0] << ", " << versor[1] << ", " << versor[2] << ")" << std::endl;
     
 
 }
 
 double CLine::get_length() const {
     return length;
+}
+
+std::vector<double> CLine::get_direction_vector() const{
+    return direction_vector;
 }

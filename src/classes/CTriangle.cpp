@@ -1,4 +1,5 @@
 #include "../headers/CTriangle.h"
+#include "../utils/functions_algebra.cpp"
 #include <iostream>
 
 // Constructor
@@ -15,6 +16,8 @@ CTriangle::CTriangle(CPoint point_1, CPoint point_2, CPoint point_3) {
    lines.push_back(l3);
 
    perimeter = lines[0].get_length() + lines[1].get_length() + lines[2].get_length();
+
+   compute_area();
 }
 
 // Destructor
@@ -24,4 +27,19 @@ CTriangle::~CTriangle() {
 
 void CTriangle::print_info() const {
     std::cout << "Perimeter: " << perimeter << "\n";
+    std::cout << "Area: " << area << "\n";
+}
+
+void CTriangle::compute_area() {
+    std::vector<double> vec1(3);
+    std::vector<double> vec2(3);
+    vec1 = lines[0].get_direction_vector();
+    vec2 = lines[1].get_direction_vector();
+    std::vector<double> vec3 = crossProduct(vec1, vec2);
+    double mag = 0.0;
+    for (double val : vec3) {
+        mag += val * val;
+    }
+    area = 0.5*sqrt(mag);
+
 }
