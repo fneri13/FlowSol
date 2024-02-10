@@ -1,0 +1,2 @@
+# FlowSol
+Educational CFD software
