@@ -8,6 +8,13 @@ CPoint::CPoint(double x, double y, double z) {
     coordinates.push_back(z);
 }
 
+// Constructor
+CPoint::CPoint() {
+    coordinates.push_back(0);
+    coordinates.push_back(0);
+    coordinates.push_back(0);
+}
+
 // Destructor
 CPoint::~CPoint() {
     // Destructor implementation, if needed

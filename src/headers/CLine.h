@@ -6,7 +6,9 @@
 class CLine {
 private:
     std::vector<CPoint> line;
-    // CPoint mid_point;
+    CPoint mid_point;
+    double length;
+    std::vector<double> direction_vector;
 
 public:
     CLine(CPoint p1, CPoint p2);
@@ -14,11 +16,11 @@ public:
     // Destructor
     ~CLine();
 
-    void printInfo();
-
-    CPoint compute_mid_point();
+    void compute_mid_point();
 
     void print_info() const;
+
+    double get_length() const;
 };
 
 #endif // CLINE_H

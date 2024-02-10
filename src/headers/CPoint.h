@@ -7,6 +7,7 @@ private:
     std::vector<double> coordinates;
 
 public:
+    CPoint();
     CPoint(double x, double y, double z);
 
     // Destructor

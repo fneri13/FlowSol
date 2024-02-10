@@ -5,7 +5,24 @@
 CLine::CLine(CPoint p1, CPoint p2) {
     line.push_back(p1);
     line.push_back(p2);
-    CPoint mid_point = compute_mid_point();
+    compute_mid_point();
+    
+    double dx = line[1].getX() - line[0].getX();
+    double dy = line[1].getY() - line[0].getY();
+    double dz = line[1].getZ() - line[0].getZ();
+    
+    length = sqrt(dx * dx + dy * dy + dz * dz);
+    
+    if (length != 0.0) {
+        direction_vector.push_back(dx / length);
+        direction_vector.push_back(dy / length);
+        direction_vector.push_back(dz / length);
+    } else {
+        // Handle the case where the length is zero (to avoid division by zero)
+        direction_vector.push_back(0.0);
+        direction_vector.push_back(0.0);
+        direction_vector.push_back(0.0);
+    }
 }
 
 // Destructor
@@ -13,23 +30,31 @@ CLine::~CLine() {
     // Destructor implementation, if needed
 }
 
-CPoint CLine::compute_mid_point() {
-    double xm, ym, zm;
-    xm = 0.5 * (line[0].getX() + line[1].getX());
-    ym = 0.5 * (line[0].getY() + line[1].getY());
-    zm = 0.5 * (line[0].getZ() + line[1].getZ());
-    CPoint mid_point(xm, ym, zm);
-    return mid_point;
+// Compute mid point
+void CLine::compute_mid_point() {
+    double mid_x = (line[0].getX() + line[1].getX()) / 2.0;
+    double mid_y = (line[0].getY() + line[1].getY()) / 2.0;
+    double mid_z = (line[0].getZ() + line[1].getZ()) / 2.0;
+    mid_point.setX(mid_x);
+    mid_point.setY(mid_y);
+    mid_point.setZ(mid_z);
 }
 
+// Print information about the line
 void CLine::print_info() const {
-    std::cout<<"Point 1: \n";
+    std::cout << "Line endpoints:" << std::endl;
+    std::cout << "Point 1: ";
     line[0].printInfo();
-
-    std::cout<<"Point 2: \n";
+    std::cout << "Point 2: ";
     line[1].printInfo();
+    std::cout << "Midpoint: ";
+    mid_point.printInfo();
+    std::cout << "Length: " << length << "\n";
+    std::cout << "Direction: (" << direction_vector[0] << ", " << direction_vector[1] << ", " << direction_vector[2] << ")" << std::endl;
+    
 
-    std::cout<<"Mid Point: \n";
-    // mid_point.printInfo();
+}
 
+double CLine::get_length() const {
+    return length;
 }
