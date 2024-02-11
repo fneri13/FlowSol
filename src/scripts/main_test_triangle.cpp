@@ -10,7 +10,9 @@ int main(int argc, char* argv[]) {
     CPoint point_3(2.1, 1.3, 1.2);
     
     CTriangle triangle(point_1, point_2, point_3);
+    triangle.compute_normal();
     triangle.print_info();
+
     
     return 0;
 }

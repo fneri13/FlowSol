@@ -8,3 +8,11 @@ std::vector<double> crossProduct(const std::vector<double>& v1, const std::vecto
     result[2] = v1[0] * v2[1] - v1[1] * v2[0];
     return result;
 }
+
+double computeMagnitude(std::vector<double> v1) {
+    double mag = 0.0;
+    for (double val : v1) {
+        mag += val * val;
+    }
+    return mag;
+}
