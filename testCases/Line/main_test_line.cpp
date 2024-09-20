@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../include/CGeometry/CLine.h"
+#include "../../src/include/CGeometry/CLine.h"
 
 int main(int argc, char* argv[]) {
 
