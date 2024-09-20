@@ -1,4 +1,4 @@
-#include "../headers/CPoint.h"
+#include "../../include/CGeometry/CPoint.h"
 #include <iostream>
 
 // Constructor

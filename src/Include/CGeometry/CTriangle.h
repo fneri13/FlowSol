@@ -2,6 +2,7 @@
 #define CTRIANGLE_H
 #include <vector>
 #include "CLine.h"
+#include "CPoint.h"
 
 class CTriangle {
 private:

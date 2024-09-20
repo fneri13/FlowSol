@@ -1,4 +1,4 @@
-#include "../headers/CLine.h"
+#include "../../include/CGeometry/CLine.h"
 #include <iostream>
 
 // Constructor
