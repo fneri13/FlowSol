@@ -1,7 +1,5 @@
 #include <iostream>
-#include "../include/CGeometry/CPoint.h"
-#include "../include/CGeometry/CLine.h"
-#include "../include/CGeometry/CTriangle.h"
+#include "../../src/include/CGeometry/CPoint.h"
 
 int main(int argc, char* argv[]) {
 
