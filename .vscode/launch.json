@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/fneri/Documents/PhD/FlowSol/TestCases",
-      "program": "/Users/fneri/Documents/PhD/FlowSol/TestCases/build/Debug/outDebug"
+      "cwd": "${fileDirname}",
+      "program": "${fileDirname}/main"
     }
   ]
 }

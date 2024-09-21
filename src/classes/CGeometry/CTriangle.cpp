@@ -11,13 +11,14 @@ CTriangle::CTriangle(CPoint point_1, CPoint point_2, CPoint point_3) {
    CLine l1(point_1, point_2);
    CLine l2(point_2, point_3);
    CLine l3(point_3, point_1);
+
    lines.push_back(l1);
    lines.push_back(l2);
    lines.push_back(l3);
 
-   perimeter = lines[0].get_length() + lines[1].get_length() + lines[2].get_length();
+   perimeter = lines[0].getLength() + lines[1].getLength() + lines[2].getLength();
    
-   compute_area();
+   computeArea();
 
    double x_cg = (point_1.getX() + point_2.getX() + point_3.getX())/3;
    double y_cg = (point_1.getY() + point_2.getY() + point_3.getY())/3;
@@ -34,7 +35,7 @@ CTriangle::~CTriangle() {
     // Destructor implementation, if needed
 }
 
-void CTriangle::print_info() const {
+void CTriangle::printInfo() const {
     std::cout << "Perimeter: " << perimeter << "\n";
     std::cout << "Area: " << area << "\n";
     std::cout << "Normal versor: (" << normal_versor[0] << "," << normal_versor[1] << "," << normal_versor[2] << ")\n";
@@ -43,23 +44,27 @@ void CTriangle::print_info() const {
 
 }
 
-void CTriangle::compute_area() {
+void CTriangle::computeArea() {
     std::vector<double> vec1(3);
     std::vector<double> vec2(3);
-    vec1 = lines[0].get_direction_vector();
-    vec2 = lines[1].get_direction_vector();
+    vec1 = lines[0].getDirectionVector();
+    vec2 = lines[1].getDirectionVector();
     std::vector<double> vec3 = crossProduct(vec1, vec2);
     double mag = computeMagnitude(vec3);
     area = 0.5*mag;
 }
 
-void CTriangle::compute_normal() {
+void CTriangle::computeNormal() {
     std::vector<double> vec1(3);
     std::vector<double> vec2(3);
-    vec1 = lines[0].get_direction_vector();
-    vec2 = lines[1].get_direction_vector();
+    vec1 = lines[0].getDirectionVector();
+    vec2 = lines[1].getDirectionVector();
     std::vector<double> vec3 = crossProduct(vec1, vec2);
-    normal_versor.push_back(vec3[0]/2);
-    normal_versor.push_back(vec3[1]/2);
-    normal_versor.push_back(vec3[2]/2);
+    double mag = computeMagnitude(vec3);
+    for (auto &comp: vec3){
+        comp /= mag;
+    }
+    normal_versor.push_back(vec3[0]);
+    normal_versor.push_back(vec3[1]);
+    normal_versor.push_back(vec3[2]);
 }

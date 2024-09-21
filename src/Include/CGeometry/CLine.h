@@ -16,10 +16,10 @@ public:
 
     // Destructor
     ~CLine();
-    void compute_mid_point();
-    void print_info() const;
-    double get_length() const;
-    std::vector<double> get_direction_vector() const;
+    void computeMidPoint();
+    void printInfo() const;
+    double getLength() const;
+    std::vector<double> getDirectionVector() const;
 };
 
 #endif // CLINE_H

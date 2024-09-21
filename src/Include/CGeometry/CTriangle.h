@@ -17,9 +17,9 @@ private:
 public:
     CTriangle(CPoint point_1, CPoint point_2, CPoint point_3);
     ~CTriangle();
-    void print_info() const;
-    void compute_area();
-    void compute_normal();
+    void printInfo() const;
+    void computeArea();
+    void computeNormal();
 };
 
 #endif 

@@ -5,7 +5,7 @@
 CLine::CLine(CPoint p1, CPoint p2) {
     line.push_back(p1);
     line.push_back(p2);
-    compute_mid_point();
+    computeMidPoint();
     
     double dx = line[1].getX() - line[0].getX();
     double dy = line[1].getY() - line[0].getY();
@@ -39,7 +39,7 @@ CLine::~CLine() {
 }
 
 // Compute mid point
-void CLine::compute_mid_point() {
+void CLine::computeMidPoint() {
     double mid_x = (line[0].getX() + line[1].getX()) / 2.0;
     double mid_y = (line[0].getY() + line[1].getY()) / 2.0;
     double mid_z = (line[0].getZ() + line[1].getZ()) / 2.0;
@@ -49,7 +49,7 @@ void CLine::compute_mid_point() {
 }
 
 // Print information about the line
-void CLine::print_info() const {
+void CLine::printInfo() const {
     std::cout << "Line endpoints:" << std::endl;
     std::cout << "Point 1: ";
     line[0].printInfo();
@@ -63,10 +63,10 @@ void CLine::print_info() const {
 
 }
 
-double CLine::get_length() const {
+double CLine::getLength() const {
     return length;
 }
 
-std::vector<double> CLine::get_direction_vector() const{
+std::vector<double> CLine::getDirectionVector() const{
     return direction_vector;
 }
