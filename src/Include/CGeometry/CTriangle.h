@@ -9,17 +9,16 @@ private:
     std::vector<CPoint> points;
     std::vector<CLine> lines;
     double perimeter;
-    double area;
     CPoint baricenter;
-    std::vector<double> normal;
-    std::vector<double> normal_versor;
+    std::vector<double> area_vector; // the normal Area vector
+    double area; // Area magnitude
+    std::vector<double> area_versor; // the normal Area versor (magnitude one)
 
 public:
     CTriangle(CPoint point_1, CPoint point_2, CPoint point_3);
     ~CTriangle();
     void printInfo() const;
     void computeArea();
-    void computeNormal();
 };
 
 #endif 

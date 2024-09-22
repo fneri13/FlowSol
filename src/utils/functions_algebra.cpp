@@ -14,5 +14,5 @@ double computeMagnitude(std::vector<double> v1) {
     for (double val : v1) {
         mag += val * val;
     }
-    return mag;
+    return sqrt(mag);
 }

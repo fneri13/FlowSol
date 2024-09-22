@@ -27,7 +27,6 @@ CTriangle::CTriangle(CPoint point_1, CPoint point_2, CPoint point_3) {
    baricenter.setY(y_cg);
    baricenter.setZ(z_cg);
 
-
 }
 
 // Destructor
@@ -37,9 +36,10 @@ CTriangle::~CTriangle() {
 
 void CTriangle::printInfo() const {
     std::cout << "Perimeter: " << perimeter << "\n";
-    std::cout << "Area: " << area << "\n";
-    std::cout << "Normal versor: (" << normal_versor[0] << "," << normal_versor[1] << "," << normal_versor[2] << ")\n";
-    std::cout << "Baricenter: \n";
+    std::cout << "Area magnitude: " << area << "\n";
+    std::cout << "Area vector: (" << area_vector[0] << "," << area_vector[1] << "," << area_vector[2] << ")\n";
+    std::cout << "Area versor: (" << area_versor[0] << "," << area_versor[1] << "," << area_versor[2] << ")\n";
+    std::cout << "Baricenter Information \n";
     baricenter.printInfo();
 
 }
@@ -47,24 +47,26 @@ void CTriangle::printInfo() const {
 void CTriangle::computeArea() {
     std::vector<double> vec1(3);
     std::vector<double> vec2(3);
-    vec1 = lines[0].getDirectionVector();
-    vec2 = lines[1].getDirectionVector();
-    std::vector<double> vec3 = crossProduct(vec1, vec2);
-    double mag = computeMagnitude(vec3);
-    area = 0.5*mag;
-}
 
-void CTriangle::computeNormal() {
-    std::vector<double> vec1(3);
-    std::vector<double> vec2(3);
+    // Compute Area by means of cross product of two sides of the parallelogram
     vec1 = lines[0].getDirectionVector();
-    vec2 = lines[1].getDirectionVector();
-    std::vector<double> vec3 = crossProduct(vec1, vec2);
-    double mag = computeMagnitude(vec3);
-    for (auto &comp: vec3){
-        comp /= mag;
+    vec2 = lines[2].getDirectionVector(); 
+    std::vector<double> vec3(3);
+    vec3 = crossProduct(vec1, vec2);
+
+    // Area vector (attention to the sign. Change it in future if it doesn't agree with the convention you have in mind)
+    area_vector.resize(3);
+    for (size_t i=0; i<3; i++){
+        area_vector.at(i) = vec3.at(i)/2.0;
     }
-    normal_versor.push_back(vec3[0]);
-    normal_versor.push_back(vec3[1]);
-    normal_versor.push_back(vec3[2]);
+
+    // Area magnitude
+    area = computeMagnitude(area_vector);
+
+    // Area versor
+    area_versor.resize(3);
+    for (size_t i=0; i<3; i++){
+        area_versor.at(i) = area_vector.at(i)/area;
+    }
+
 }
