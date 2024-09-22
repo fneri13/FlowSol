@@ -19,6 +19,9 @@ public:
     ~CTriangle();
     void printInfo() const;
     void computeArea();
+    std::vector<double> getAreaVector() const {return area_vector;}
+    CPoint getBaricenter() const {return baricenter;}
+    double getArea() const {return area;}
 };
 
 #endif 

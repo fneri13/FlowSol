@@ -13,15 +13,13 @@ private:
     double perimeter;
     double area;
     CPoint baricenter;
-    std::vector<double> normal;
-    std::vector<double> normal_versor;
+    std::vector<double> area_vector;
+    std::vector<double> area_versor;
 
 public:
     CSquare(CPoint point_1, CPoint point_2, CPoint point_3, CPoint point_4);
     ~CSquare();
     void printInfo() const;
-    void computeArea();
-    void computeNormal();
 };
 
 #endif 

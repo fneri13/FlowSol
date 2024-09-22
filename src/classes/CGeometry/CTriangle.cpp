@@ -1,5 +1,5 @@
 #include "../../include/CGeometry/CTriangle.h"
-#include "../../utils/functions_algebra.cpp"
+#include "../../utils/functions_algebra.h"
 #include <iostream>
 
 // Constructor

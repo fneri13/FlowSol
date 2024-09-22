@@ -1,5 +1,5 @@
-#include <iostream>
 #include <vector>
+#include "functions_algebra.h"
 
 std::vector<double> crossProduct(const std::vector<double>& v1, const std::vector<double>& v2) {
     std::vector<double> result(3);
@@ -16,3 +16,4 @@ double computeMagnitude(std::vector<double> v1) {
     }
     return sqrt(mag);
 }
+
