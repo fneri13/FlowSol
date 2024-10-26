@@ -15,36 +15,17 @@ OneDimensionalFV::OneDimensionalFV(double leng, int nPoints) {
 OneDimensionalFV::~OneDimensionalFV(){
     std::cout<< "\n\n\n";
     std::cout<<"---------------- DATA STRUCTURE DEALLOCATION ----------------" << std::endl;
-
-    delete [] x;
-    std::cout << "X array deleted from memory" << std::endl;
-
-    delete [] rho;
-    delete [] u;
-    delete [] p;
-    delete [] e;
-    std::cout << "Density array deleted from memory" << std::endl;
-    std::cout << "Velocity array deleted from memory" << std::endl;
-    std::cout << "Pressure array deleted from memory" << std::endl;
-    std::cout << "Energy array deleted from memory" << std::endl;
-
-    delete [] U1;
-    delete [] U2;
-    delete [] U3;
-    std::cout << "U1 array deleted from memory" << std::endl;
-    std::cout << "U2 array deleted from memory" << std::endl;
-    std::cout << "U3 array deleted from memory" << std::endl;
 }
 
 void OneDimensionalFV::InstantiateDataArrays(){
-    x = new double [nPointsHalo];
-    rho = new double [nPointsHalo];
-    u = new double [nPointsHalo];
-    p = new double [nPointsHalo];
-    e = new double [nPointsHalo];
-    U1 = new double [nPointsHalo];
-    U2 = new double [nPointsHalo];
-    U3 = new double [nPointsHalo];
+    x.resize(nPointsHalo);
+    rho.resize(nPointsHalo);
+    u.resize(nPointsHalo);
+    p.resize(nPointsHalo);
+    e.resize(nPointsHalo);
+    U1.resize(nPointsHalo);
+    U2.resize(nPointsHalo);
+    U3.resize(nPointsHalo);
 }
 
 void OneDimensionalFV::PrintDataOnScreen(){
@@ -55,17 +36,17 @@ void OneDimensionalFV::PrintDataOnScreen(){
 void OneDimensionalFV::SetLeftRightInitialCondition(double rhoL, double rhoR, double uL, double uR, double pL, double pR){
     double xMean = x[1]+length/2;
     for (int i=0; i<nPointsHalo; i++){
-        if (x[i]<=xMean){
-            rho[i] = rhoL;
-            u[i] = uL;
-            p[i] = pL;
-            e[i] = pL/(gmma-1.0)/rhoL;
+        if (x.at(i)<=xMean){
+            rho.at(i) = rhoL;
+            u.at(i) = uL;
+            p.at(i) = pL;
+            e.at(i) = pL/(gmma-1.0)/rhoL;
         }
         else{
-            rho[i] = rhoR;
-            u[i] = uR;
-            p[i] = pR;
-            e[i] = pR/(gmma-1.0)/rhoR;
+            rho.at(i) = rhoR;
+            u.at(i) = uR;
+            p.at(i) = pR;
+            e.at(i) = pR/(gmma-1.0)/rhoR;
         }
     }
 }
@@ -79,40 +60,32 @@ void OneDimensionalFV::SetBoundaryConditions(unsigned short BC){
 }
 
 void OneDimensionalFV::SetReflectiveBoundaryConditions(){
-    rho[0] = rho[1];
-    rho[nPointsHalo-1] = rho[nPointsHalo-2];
+    rho.at(0) = rho.at(1);
+    rho.at(nPointsHalo-1) = rho.at(nPointsHalo-2);
 
-    u[0] = -u[1];
-    u[nPointsHalo-1] = -u[nPointsHalo-2];
+    u.at(0) = -u.at(1);
+    u.at(nPointsHalo-1) = -u.at(nPointsHalo-2);
 
-    p[0] = p[1];
-    p[nPointsHalo-1] = p[nPointsHalo-2];
+    p.at(0) = p.at(1);
+    p.at(nPointsHalo-1) = p.at(nPointsHalo-2);
 
-    e[0] = e[1];
-    e[nPointsHalo-1] = e[nPointsHalo-2];
+    e.at(0) = e.at(1);
+    e.at(nPointsHalo-1) = e.at(nPointsHalo-2);
 }
 
 void OneDimensionalFV::ComputeConservatives(){
-    ConsFromPrim(rho, u, p, e);
-}
-
-void OneDimensionalFV::ComputePrimitives(){
-    PrimFromCons(U1, U2, U3);
-}
-
-void OneDimensionalFV::ConsFromPrim(const double *density, const double *velocity, const double *pressure, const double *energy){
     for (int i=0; i<nPointsHalo; i++){
-        U1[i] = density[i];
-        U2[i] = density[i]*velocity[i];
-        U3[i] = density[i]*(0.5*velocity[i]*velocity[i]+energy[i]);
+        U1[i] = rho[i];
+        U2[i] = rho[i]*u[i];
+        U3[i] = rho[i]*(0.5*u[i]*u[i]+e[i]);
     }
 }
 
-void OneDimensionalFV::PrimFromCons(const double *u1, const double *u2, const double *u3){
+void OneDimensionalFV::ComputePrimitives(){
     for (int i=0; i<nPointsHalo; i++){
-        rho[i] = u1[i];
-        u[i] = u2[i]/u1[i];
-        e[i] = u3[i]/rho[i]-0.5*u[i]*u[i];
+        rho[i] = U1[i];
+        u[i] = U2[i]/U1[i];
+        e[i] = U3[i]/rho[i]-0.5*u[i]*u[i];
         p[i] = (gmma-1)*rho[i]*e[i];
     }
 }
@@ -123,10 +96,14 @@ void OneDimensionalFV::SolveSystem(double timeMax, double cflMax, int method){
         int timeSteps = timeMax/dt;
         std::vector<double> fL (3, 0.0);
         std::vector<double> fR (3, 0.0);
+        std::vector<double> U1old, U2old, U3old; // copies needed during the iterations
 
         while (time<=timeMax){
             std::cout << "Time step " << time/dt << ":" << timeSteps << std::endl;
             ComputeConservatives();
+            U1old = U1;
+            U2old = U2;
+            U3old = U3;
             for (int ix=1; ix<nPointsHalo-1; ix++){
                 if (ix==1){
                     fL = ComputeFluxVector(ix-1, ix, method);
@@ -137,9 +114,10 @@ void OneDimensionalFV::SolveSystem(double timeMax, double cflMax, int method){
                     fR = ComputeFluxVector(ix, ix+1, method);
                 }
 
-                U1[ix] += dt/dx*(fL[0]-fR[0]);
-                U2[ix] += dt/dx*(fL[1]-fR[1]);
-                U3[ix] += dt/dx*(fL[2]-fR[2]);
+                // here there is probbaly the need to store the old solution, otherwise there is aliasing during the calculation proceeding along x
+                U1.at(ix) = U1old.at(ix) + dt/dx*(fL.at(0)-fR.at(0));
+                U2.at(ix) = U2old.at(ix) + dt/dx*(fL.at(1)-fR.at(1));
+                U3.at(ix) = U3old.at(ix) + dt/dx*(fL.at(2)-fR.at(2));
             }
             ComputePrimitives();
             SetBoundaryConditions(BC_type);
@@ -155,7 +133,7 @@ std::vector<double> OneDimensionalFV::ComputeFluxVector(int il, int ir, int meth
     double uR = u[ir];
     double pL = p[il];
     double pR = p[ir];
-    std::vector<double> flux_roe;
+    std::vector<double> flux_roe (3,0.0);
     if (method==0){
         RoeScheme roe(rhoL, rhoR, uL, uR, pL, pR, gmma);
         roe.ComputeAVGVariables();

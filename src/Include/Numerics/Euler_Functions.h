@@ -17,7 +17,7 @@ inline double ComputeTotalEnthalpy(double rho, double u, double p, double e){
     return ht;
 }
 
-inline std::vector<double> EulerFlux(const double u1, const double u2, const double u3, const double u4, const double u5, const double gmma){
+inline std::vector<double> EulerFlux(const double u1, const double u2, const double u3, const double gmma){
     std::vector<double> flux (5, 0.0);
     flux[0] = u2;
     flux[1] = 0.5*(3-gmma)*u2*u2/u1+(gmma-1)*u3;

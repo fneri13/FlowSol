@@ -3,9 +3,9 @@
 
 int main() {
     double LENGTH {1.0};
-    int NX {250};
+    int NX {100};
     double TIME_MAX {2.0};
-    double CFL_MAX {0.5};
+    double CFL_MAX {0.1};
     double RHOL {1.0}; 
     double RHOR {0.125};
     double UL {.0}, UR{.0};

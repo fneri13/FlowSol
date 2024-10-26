@@ -9,14 +9,7 @@
 
 class OneDimensionalFV {
 private:
-    double* x {nullptr};
-    double* rho {nullptr};
-    double* u {nullptr};
-    double* p {nullptr};
-    double* e {nullptr};
-    double* U1 {nullptr};
-    double* U2 {nullptr};
-    double* U3 {nullptr};
+    std::vector<double> x, rho, u, p, e, U1, U2, U3;
     double gmma {1.4};
     double dt {0.0};
     double CFL {0.0};
@@ -60,21 +53,30 @@ public:
     void ComputeConservatives();
 
     /*
-    Compute conservatives from the specified input to the specified outputs
+    Driver for the solution of the system
     */
-    void ConsFromPrim(const double *rho, const double *u, const double *p, const double *e);
-
     void SolveSystem(double timeMax, double cflMax, int method);
 
+     /*
+    Compute dt according to a cflMax specified and an approximation of max eigenvalue
+    */
     double ComputeTimeStep(double cflMax);
 
+     /*
+    Compute the euler flux vector at the interface between two cells
+    */
     std::vector<double> ComputeFluxVector(int il, int ir, int method);
 
+    /*
+    Write the results on .dat file
+    */
     void WriteResults();
 
+    /*
+    Compute the primitives from the conservatives
+    */
     void ComputePrimitives();
 
-    void PrimFromCons(const double *cons1, const double *cons2, const double *cons3);
 };
 
 #endif // ONEDIMENSIONALFV_H
