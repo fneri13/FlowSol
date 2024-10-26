@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 
 
 class OneDimensionalFV {
@@ -70,7 +71,7 @@ public:
     /*
     Write the results on .dat file
     */
-    void WriteResults();
+    void WriteResults(int iTime);
 
     /*
     Compute the primitives from the conservatives

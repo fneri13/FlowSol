@@ -7,7 +7,7 @@ OneDimensionalFV::OneDimensionalFV(double leng, int nPoints) {
     length = leng;
     nPointsHalo = nPoints+2;
     InstantiateDataArrays();
-    dx = length/nPoints;
+    dx = length/(nPoints-1);
     for (int i=0; i<nPointsHalo; i++){x[i] = (i-1)*dx;}
 }
 
@@ -49,6 +49,7 @@ void OneDimensionalFV::SetLeftRightInitialCondition(double rhoL, double rhoR, do
             e.at(i) = pR/(gmma-1.0)/rhoR;
         }
     }
+    ComputeConservatives();
 }
 
 void OneDimensionalFV::SetBoundaryConditions(unsigned short BC){
@@ -57,6 +58,7 @@ void OneDimensionalFV::SetBoundaryConditions(unsigned short BC){
         std::cout << "Setting Reflective Boundary Conditions" << std::endl;
         SetReflectiveBoundaryConditions();
     }
+    ComputeConservatives();
 }
 
 void OneDimensionalFV::SetReflectiveBoundaryConditions(){
@@ -97,10 +99,10 @@ void OneDimensionalFV::SolveSystem(double timeMax, double cflMax, int method){
         std::vector<double> fL (3, 0.0);
         std::vector<double> fR (3, 0.0);
         std::vector<double> U1old, U2old, U3old; // copies needed during the iterations
+        int iTime = 1;
 
         while (time<=timeMax){
-            std::cout << "Time step " << time/dt << ":" << timeSteps << std::endl;
-            ComputeConservatives();
+            std::cout << "Time step " << time/dt << " : " << timeSteps << std::endl;
             U1old = U1;
             U2old = U2;
             U3old = U3;
@@ -121,7 +123,9 @@ void OneDimensionalFV::SolveSystem(double timeMax, double cflMax, int method){
             }
             ComputePrimitives();
             SetBoundaryConditions(BC_type);
+            WriteResults(iTime);
             time += dt;
+            iTime ++;
         }
 
     }
@@ -158,12 +162,15 @@ double OneDimensionalFV::ComputeTimeStep(double cflMax){
     return tstep;
 }
 
-void OneDimensionalFV::WriteResults(){
+void OneDimensionalFV::WriteResults(int iTime){
     int width = 12;
     std::filesystem::create_directory("Results");
 
     // Open the file "results/sol.dat" for writing
-    std::ofstream file("Results/Sol.dat");
+    std::ostringstream oss;
+    oss << "Results/Sol_" << std::setw(3) << std::setfill('0') << iTime << ".dat";
+    std::string filename = oss.str();
+    std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Could not open the file for writing.\n";
     }   

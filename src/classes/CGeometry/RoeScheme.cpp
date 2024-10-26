@@ -74,7 +74,7 @@ void RoeScheme::ComputeAveragedEigenvectors(){
 void RoeScheme::ComputeWaveStrengths(){
     alphas.resize(5);
     alphas[0] = 1/2/aAVG/aAVG *(pR-pL-rhoAVG*aAVG*(uR-uL));
-    alphas[1] = rhoR-rhoL - (pR-pL)/aAVG*aAVG;
+    alphas[1] = rhoR-rhoL - (pR-pL)/aAVG/aAVG;
     alphas[2] = rhoAVG*vAVG;
     alphas[3] = rhoAVG*wAVG;
     alphas[4] = 1/2/aAVG/aAVG*(pR-pL + rhoAVG*aAVG*(uR-uL));
@@ -106,6 +106,6 @@ std::vector<double> RoeScheme::ComputeFlux(){
     fOneDim.at(1) = fRoe.at(1);
     fOneDim.at(2) = fRoe.at(4);
 
-    return fOneDim; 
+    return fOneDim;
 }
 

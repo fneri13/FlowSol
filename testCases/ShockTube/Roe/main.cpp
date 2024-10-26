@@ -3,8 +3,8 @@
 
 int main() {
     double LENGTH {1.0};
-    int NX {100};
-    double TIME_MAX {2.0};
+    int NX {50};
+    double TIME_MAX {0.25};
     double CFL_MAX {0.1};
     double RHOL {1.0}; 
     double RHOR {0.125};
@@ -16,7 +16,7 @@ int main() {
     domain.SetLeftRightInitialCondition(RHOL, RHOR, UL, UR, PL, PR);
     domain.SetBoundaryConditions(BCs);
     domain.SolveSystem(TIME_MAX, CFL_MAX, 0);
-    domain.WriteResults();
+    
 
     return 0;
 }
