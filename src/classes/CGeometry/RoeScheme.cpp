@@ -75,12 +75,12 @@ void RoeScheme::ComputeWaveStrengths(){
     alphas[4] = 1/2/aAVG*aAVG*(pR-pL + rhoAVG*aAVG*(uR-uL));
 }
 
-double* RoeScheme::ComputeFlux(){
-    // Declare pointers, but don't allocate memory if they are assigned immediately
-    double* fL {nullptr}; 
-    double* fR {nullptr}; 
-    double* fMean = new double[5]{0.0}; // Allocate for fMean only if used
-    double* fRoe = new double[5]{0.0}; // Allocate for fRoe only if used
+std::vector<double> RoeScheme::ComputeFlux(){
+    std::vector<double> fL (5, 0.0); 
+    std::vector<double> fR (5, 0.0); 
+    std::vector<double> fMean (5, 0.0); 
+    std::vector<double> fRoe (5, 0.0); 
+    std::vector<double> fOneDim (3, 0.0);
 
     // Get flux values from EulerFlux
     fL = EulerFlux(U1L, U2L, 0.0, 0.0, U3L, gmmaGas);
@@ -93,23 +93,15 @@ double* RoeScheme::ComputeFlux(){
 
     // Compute Roe flux
     for (int iDim = 0; iDim < 5; iDim++) {
-        for (int jVec = 1; jVec < 5; jVec++) {
+        for (int jVec = 0; jVec < 5; jVec++) {
             fRoe[iDim] -= 0.5 * alphas[jVec] * abs(eigenvalues[jVec]) * eigenvectors[iDim][jVec];
         }
     }
+    
+    fOneDim.at(0) = fRoe.at(0);
+    fOneDim.at(1) = fRoe.at(1);
+    fOneDim.at(2) = fRoe.at(4);
 
-    // Allocate fOneDim to return it correctly
-    double* fOneDim = new double[3];
-    fOneDim[0] = fRoe[0];
-    fOneDim[1] = fRoe[1];
-    fOneDim[2] = fRoe[4];
-
-    // Clean up dynamically allocated memory
-    delete[] fL;
-    delete[] fR;
-    delete[] fMean;
-    delete[] fRoe; 
-
-    return fOneDim; // Caller must delete this array
+    return fOneDim; 
 }
 

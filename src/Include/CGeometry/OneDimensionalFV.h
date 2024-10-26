@@ -62,15 +62,19 @@ public:
     /*
     Compute conservatives from the specified input to the specified outputs
     */
-    void ConsFromPrim(const double *rho, const double *u, const double *p, const double *e, double *U1, double *U2, double *U3);
+    void ConsFromPrim(const double *rho, const double *u, const double *p, const double *e);
 
     void SolveSystem(double timeMax, double cflMax, int method);
 
     double ComputeTimeStep(double cflMax);
 
-    double* ComputeFluxVector(int il, int ir, int method);
+    std::vector<double> ComputeFluxVector(int il, int ir, int method);
 
     void WriteResults();
+
+    void ComputePrimitives();
+
+    void PrimFromCons(const double *cons1, const double *cons2, const double *cons3);
 };
 
 #endif // ONEDIMENSIONALFV_H

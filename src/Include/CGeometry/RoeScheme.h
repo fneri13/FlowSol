@@ -16,7 +16,7 @@ public:
     void ComputeAveragedEigenvalues();
     void ComputeAveragedEigenvectors();
     void ComputeWaveStrengths();
-    double* ComputeFlux();
+    std::vector<double> ComputeFlux();
     
 };
 

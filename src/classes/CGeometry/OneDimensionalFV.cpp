@@ -90,15 +90,17 @@ void OneDimensionalFV::SetReflectiveBoundaryConditions(){
 
     e[0] = e[1];
     e[nPointsHalo-1] = e[nPointsHalo-2];
-
-    ComputeConservatives();
 }
 
 void OneDimensionalFV::ComputeConservatives(){
-    ConsFromPrim(rho, u, p, e, U1, U2, U3);
+    ConsFromPrim(rho, u, p, e);
 }
 
-void OneDimensionalFV::ConsFromPrim(const double *density, const double *velocity, const double *pressure, const double *energy, double *cons1, double *cons2, double *cons3){
+void OneDimensionalFV::ComputePrimitives(){
+    PrimFromCons(U1, U2, U3);
+}
+
+void OneDimensionalFV::ConsFromPrim(const double *density, const double *velocity, const double *pressure, const double *energy){
     for (int i=0; i<nPointsHalo; i++){
         U1[i] = density[i];
         U2[i] = density[i]*velocity[i];
@@ -106,15 +108,25 @@ void OneDimensionalFV::ConsFromPrim(const double *density, const double *velocit
     }
 }
 
+void OneDimensionalFV::PrimFromCons(const double *u1, const double *u2, const double *u3){
+    for (int i=0; i<nPointsHalo; i++){
+        rho[i] = u1[i];
+        u[i] = u2[i]/u1[i];
+        e[i] = u3[i]/rho[i]-0.5*u[i]*u[i];
+        p[i] = (gmma-1)*rho[i]*e[i];
+    }
+}
+
 void OneDimensionalFV::SolveSystem(double timeMax, double cflMax, int method){
         double time {0.0};
         dt = ComputeTimeStep(cflMax);
         int timeSteps = timeMax/dt;
-        double *fL;
-        double *fR;
+        std::vector<double> fL (3, 0.0);
+        std::vector<double> fR (3, 0.0);
 
         while (time<=timeMax){
             std::cout << "Time step " << time/dt << ":" << timeSteps << std::endl;
+            ComputeConservatives();
             for (int ix=1; ix<nPointsHalo-1; ix++){
                 if (ix==1){
                     fL = ComputeFluxVector(ix-1, ix, method);
@@ -124,20 +136,26 @@ void OneDimensionalFV::SolveSystem(double timeMax, double cflMax, int method){
                     fL = fR;
                     fR = ComputeFluxVector(ix, ix+1, method);
                 }
+
+                U1[ix] += dt/dx*(fL[0]-fR[0]);
+                U2[ix] += dt/dx*(fL[1]-fR[1]);
+                U3[ix] += dt/dx*(fL[2]-fR[2]);
             }
+            ComputePrimitives();
+            SetBoundaryConditions(BC_type);
             time += dt;
         }
 
     }
 
-double* OneDimensionalFV::ComputeFluxVector(int il, int ir, int method){
+std::vector<double> OneDimensionalFV::ComputeFluxVector(int il, int ir, int method){
     double rhoL = rho[il];
     double rhoR = rho[ir];
     double uL = u[il];
     double uR = u[ir];
     double pL = p[il];
     double pR = p[ir];
-    double* flux_roe;
+    std::vector<double> flux_roe;
     if (method==0){
         RoeScheme roe(rhoL, rhoR, uL, uR, pL, pR, gmma);
         roe.ComputeAVGVariables();
