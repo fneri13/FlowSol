@@ -1,16 +1,16 @@
 #include "../../include/CGeometry/RoeScheme.h"
 #include <iostream>
 
-RoeScheme::RoeScheme(double rhol, double rhor, double ul, double ur, double pl, double pr, double gmma){
+RoeScheme::RoeScheme(double rhol, double rhor, double ul, double ur, double pl, double pr){
     rhoL = rhol;
     rhoR = rhor;
     uL = ul;
     uR = ur;
     pL = pl;
     pR = pr;
-    gmmaGas = gmma;
-    eL = pL/(gmma-1)/rhoL;
-    eR = pR/(gmma-1)/rhoR;
+    gmmaGas = 1.4;
+    eL = pL/(gmmaGas-1)/rhoL;
+    eR = pR/(gmmaGas-1)/rhoR;
 
     htL = ComputeTotalEnthalpy(rhoL, uL, pL, eL);
     htR = ComputeTotalEnthalpy(rhoR, uR, pR, eR);
@@ -29,55 +29,55 @@ void RoeScheme::ComputeAVGVariables(){
 
 void RoeScheme::ComputeAveragedEigenvalues(){
     eigenvalues.resize(5);
-    eigenvalues[0] = uAVG - aAVG;
-    eigenvalues[1] = uAVG;
-    eigenvalues[2] = uAVG;
-    eigenvalues[3] = uAVG;
-    eigenvalues[4] = uAVG + aAVG;
+    eigenvalues.at(0) = uAVG - aAVG;
+    eigenvalues.at(1) = uAVG;
+    eigenvalues.at(2) = uAVG;
+    eigenvalues.at(3) = uAVG;
+    eigenvalues.at(4) = uAVG + aAVG;
 }
 
 void RoeScheme::ComputeAveragedEigenvectors(){
     eigenvectors.resize(5);
     for (int i=0; i<5; i++){ eigenvectors.at(i).resize(5);}
 
-    eigenvectors[0][0] = 1.0;
-    eigenvectors[1][0] = uAVG-aAVG; 
-    eigenvectors[2][0] = 0.0;
-    eigenvectors[3][0] = 0.0;
-    eigenvectors[4][0] = hAVG-uAVG*aAVG;
+    eigenvectors.at(0).at(0) = 1.0;
+    eigenvectors.at(1).at(0) = uAVG-aAVG; 
+    eigenvectors.at(2).at(0) = 0.0;
+    eigenvectors.at(3).at(0) = 0.0;
+    eigenvectors.at(3).at(0) = hAVG-uAVG*aAVG;
 
-    eigenvectors[0][1] = 1.0; 
-    eigenvectors[1][1] = uAVG;
-    eigenvectors[2][1] = 0.0;
-    eigenvectors[3][1] = 0.0;
-    eigenvectors[4][1] = 0.5*uAVG*uAVG; 
+    eigenvectors.at(0).at(1) = 1.0; 
+    eigenvectors.at(1).at(1) = uAVG;
+    eigenvectors.at(2).at(1) = 0.0;
+    eigenvectors.at(3).at(1) = 0.0;
+    eigenvectors.at(4).at(1) = 0.5*uAVG*uAVG; 
 
-    eigenvectors[0][2] = 0.0; 
-    eigenvectors[1][2] = 0.0;
-    eigenvectors[2][2] = 1.0;
-    eigenvectors[3][2] = 0.0;
-    eigenvectors[4][2] = 0.0;
+    eigenvectors.at(0).at(2) = 0.0; 
+    eigenvectors.at(1).at(2) = 0.0;
+    eigenvectors.at(2).at(2) = 1.0;
+    eigenvectors.at(3).at(2) = 0.0;
+    eigenvectors.at(4).at(2) = 0.0;
 
-    eigenvectors[0][3] = 0.0; 
-    eigenvectors[1][3] = 0.0;
-    eigenvectors[2][3] = 0.0;
-    eigenvectors[3][3] = 1.0;
-    eigenvectors[4][3] = 0.0;
+    eigenvectors.at(0).at(3) = 0.0; 
+    eigenvectors.at(1).at(3) = 0.0;
+    eigenvectors.at(2).at(3) = 0.0;
+    eigenvectors.at(3).at(3) = 1.0;
+    eigenvectors.at(4).at(3) = 0.0;
 
-    eigenvectors[0][4] = 1.0; 
-    eigenvectors[1][4] = uAVG+aAVG;
-    eigenvectors[2][4] = 0.0;
-    eigenvectors[3][4] = 0.0;
-    eigenvectors[4][4] = hAVG+uAVG*aAVG;
+    eigenvectors.at(0).at(4) = 1.0; 
+    eigenvectors.at(1).at(4) = uAVG+aAVG;
+    eigenvectors.at(2).at(4) = 0.0;
+    eigenvectors.at(3).at(4) = 0.0;
+    eigenvectors.at(4).at(4) = hAVG+uAVG*aAVG;
 }
 
 void RoeScheme::ComputeWaveStrengths(){
     alphas.resize(5);
-    alphas[0] = 1/2/aAVG/aAVG *(pR-pL-rhoAVG*aAVG*(uR-uL));
+    alphas[0] = 0.5/aAVG/aAVG *(pR-pL-rhoAVG*aAVG*(uR-uL));
     alphas[1] = rhoR-rhoL - (pR-pL)/aAVG/aAVG;
     alphas[2] = rhoAVG*vAVG;
     alphas[3] = rhoAVG*wAVG;
-    alphas[4] = 1/2/aAVG/aAVG*(pR-pL + rhoAVG*aAVG*(uR-uL));
+    alphas[4] = 0.5/aAVG/aAVG*(pR-pL + rhoAVG*aAVG*(uR-uL));
 }
 
 std::vector<double> RoeScheme::ComputeFlux(){
@@ -92,13 +92,13 @@ std::vector<double> RoeScheme::ComputeFlux(){
 
     // Compute the mean flux
     for (int i = 0; i < 5; i++) {
-        fRoe[i] = 0.5 * (fL[i] + fR[i]);
+        fRoe.at(i) = 0.5 * (fL.at(i) + fR.at(i));
     }
 
     // Compute Roe flux
     for (int iDim = 0; iDim < 5; iDim++) {
         for (int jVec = 0; jVec < 5; jVec++) {
-            fRoe[iDim] -= 0.5 * alphas[jVec] * abs(eigenvalues[jVec]) * eigenvectors[iDim][jVec];
+            fRoe.at(iDim) -= 0.5 * alphas.at(jVec) * abs(eigenvalues.at(jVec)) * eigenvectors.at(iDim).at(jVec);
         }
     }
     

@@ -49,6 +49,11 @@ public:
     void SetReflectiveBoundaryConditions();
 
     /*
+    Set transparent boundary conditions on the primitive variables, and update the conservative variables
+    */
+    void SetTransparentBoundaryConditions();
+
+    /*
     Given the current primitive variables, compute the conservative ones
     */
     void ComputeConservatives();

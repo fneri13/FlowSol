@@ -3,12 +3,12 @@
 
 int main() {
     double LENGTH {1.0};
-    int NX {50};
-    double TIME_MAX {0.25};
-    double CFL_MAX {0.1};
+    int NX {200};
+    double TIME_MAX {1.0};
+    double CFL_MAX {0.5};
     double RHOL {1.0}; 
     double RHOR {0.125};
-    double UL {.0}, UR{.0};
+    double UL {0.0}, UR{0.0};
     double PL {1.0}, PR {0.1};
     unsigned short BCs {0};
 

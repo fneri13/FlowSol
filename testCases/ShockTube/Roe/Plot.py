@@ -16,7 +16,8 @@ if os.path.isdir(folder_path):
 else:
     print(f"The folder '{folder_path}' does not exist.")
 
-
+timesteps = len(files)
+dum = 1
 fig, ax = plt.subplots(2, 2, figsize=(12, 8))
 for file in files:
     data = np.loadtxt(folder_path+ '/'+file, skiprows=1)
@@ -39,6 +40,8 @@ for file in files:
     ax[1, 1].plot(data[:,0], data[:,4])
     ax[1, 1].set_ylabel('Energy')
 
-    plt.pause(0.1)
+    plt.suptitle('Time Step %i:%i' %(dum, timesteps))
+    plt.pause(0.001)
+    dum += 1
 
 plt.show()

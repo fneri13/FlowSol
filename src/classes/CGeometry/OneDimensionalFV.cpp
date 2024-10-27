@@ -49,16 +49,18 @@ void OneDimensionalFV::SetLeftRightInitialCondition(double rhoL, double rhoR, do
             e.at(i) = pR/(gmma-1.0)/rhoR;
         }
     }
-    ComputeConservatives();
 }
 
 void OneDimensionalFV::SetBoundaryConditions(unsigned short BC){
     BC_type = BC;
     if (BC==0){
-        std::cout << "Setting Reflective Boundary Conditions" << std::endl;
+        // std::cout << "Setting Reflective Boundary Conditions" << std::endl;
         SetReflectiveBoundaryConditions();
     }
-    ComputeConservatives();
+    else if (BC==1){
+        // std::cout << "Setting Reflective Boundary Conditions" << std::endl;
+        SetTransparentBoundaryConditions();
+    }
 }
 
 void OneDimensionalFV::SetReflectiveBoundaryConditions(){
@@ -67,6 +69,20 @@ void OneDimensionalFV::SetReflectiveBoundaryConditions(){
 
     u.at(0) = -u.at(1);
     u.at(nPointsHalo-1) = -u.at(nPointsHalo-2);
+
+    p.at(0) = p.at(1);
+    p.at(nPointsHalo-1) = p.at(nPointsHalo-2);
+
+    e.at(0) = e.at(1);
+    e.at(nPointsHalo-1) = e.at(nPointsHalo-2);
+}
+
+void OneDimensionalFV::SetTransparentBoundaryConditions(){
+    rho.at(0) = rho.at(1);
+    rho.at(nPointsHalo-1) = rho.at(nPointsHalo-2);
+
+    u.at(0) = u.at(1);
+    u.at(nPointsHalo-1) = u.at(nPointsHalo-2);
 
     p.at(0) = p.at(1);
     p.at(nPointsHalo-1) = p.at(nPointsHalo-2);
@@ -100,9 +116,11 @@ void OneDimensionalFV::SolveSystem(double timeMax, double cflMax, int method){
         std::vector<double> fR (3, 0.0);
         std::vector<double> U1old, U2old, U3old; // copies needed during the iterations
         int iTime = 1;
+        SetBoundaryConditions(BC_type);
+        ComputeConservatives();
 
         while (time<=timeMax){
-            std::cout << "Time step " << time/dt << " : " << timeSteps << std::endl;
+            std::cout << "Time step " << iTime << " : " << timeSteps << std::endl;
             U1old = U1;
             U2old = U2;
             U3old = U3;
@@ -139,7 +157,7 @@ std::vector<double> OneDimensionalFV::ComputeFluxVector(int il, int ir, int meth
     double pR = p[ir];
     std::vector<double> flux_roe (3,0.0);
     if (method==0){
-        RoeScheme roe(rhoL, rhoR, uL, uR, pL, pR, gmma);
+        RoeScheme roe(rhoL, rhoR, uL, uR, pL, pR);
         roe.ComputeAVGVariables();
         roe.ComputeAveragedEigenvalues();
         roe.ComputeAveragedEigenvectors();
@@ -151,9 +169,9 @@ std::vector<double> OneDimensionalFV::ComputeFluxVector(int il, int ir, int meth
 
 double OneDimensionalFV::ComputeTimeStep(double cflMax){
     CFL = cflMax;
-    double max_eig {0};
-    double a {0};
-    double tstep {0};
+    double max_eig {0.0};
+    double a {0.0};
+    double tstep {0.0};
     for (int i=0; i<nPointsHalo; i++){
         a = sqrt(p[i]*gmma/rho[i]);
         if (abs(u[i])+abs(a)>=max_eig){max_eig=abs(u[i])+abs(a);}
@@ -164,11 +182,14 @@ double OneDimensionalFV::ComputeTimeStep(double cflMax){
 
 void OneDimensionalFV::WriteResults(int iTime){
     int width = 12;
-    std::filesystem::create_directory("Results");
+    std::filesystem::path dir = "Results";
+
+    // Now create the directory
+    std::filesystem::create_directory(dir);
 
     // Open the file "results/sol.dat" for writing
     std::ostringstream oss;
-    oss << "Results/Sol_" << std::setw(3) << std::setfill('0') << iTime << ".dat";
+    oss << "Results/Sol_" << std::setw(4) << std::setfill('0') << iTime << ".dat";
     std::string filename = oss.str();
     std::ofstream file(filename);
     if (!file.is_open()) {

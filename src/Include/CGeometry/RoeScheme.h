@@ -13,7 +13,7 @@ private:
     std::vector<std::vector<double>> eigenvectors;
 
 public:
-    RoeScheme(double, double, double, double, double, double, double);
+    RoeScheme(double, double, double, double, double, double);
     void ComputeAVGVariables();
     void ComputeAveragedEigenvalues();
     void ComputeAveragedEigenvectors();
