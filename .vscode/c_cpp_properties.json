@@ -5,8 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/homebrew/Cellar/libomp",
+                "/opt/homebrew/Cellar/libomp/19.1.0/include"
             ],
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/opt/homebrew/bin/g++-14",
             "cStandard": "${default}",
             "cppStandard": "${default}",
             "intelliSenseMode": "macos-clang-arm64",

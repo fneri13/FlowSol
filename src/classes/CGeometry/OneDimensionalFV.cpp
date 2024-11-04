@@ -120,7 +120,7 @@ void OneDimensionalFV::SolveSystem(double timeMax, double cflMax, int method){
         ComputeConservatives();
 
         while (time<=timeMax){
-            std::cout << "Time step " << iTime << " : " << timeSteps << std::endl;
+            std::cout << "Time step " << iTime << " : " << (timeSteps+1) << std::endl;
             U1old = U1;
             U2old = U2;
             U3old = U3;
@@ -173,15 +173,15 @@ double OneDimensionalFV::ComputeTimeStep(double cflMax){
     double a {0.0};
     double tstep {0.0};
     for (int i=0; i<nPointsHalo; i++){
-        a = sqrt(p[i]*gmma/rho[i]);
-        if (abs(u[i])+abs(a)>=max_eig){max_eig=abs(u[i])+abs(a);}
+        a = sqrt(p.at(i)*gmma/rho.at(i));
+        if (abs(u.at(i))+abs(a)>=max_eig){max_eig=abs(u.at(i))+abs(a);}
     }
     tstep = dx*cflMax/max_eig;
     return tstep;
 }
 
 void OneDimensionalFV::WriteResults(int iTime){
-    int width = 12;
+    int width = 15;
     std::filesystem::path dir = "Results";
 
     // Now create the directory
@@ -200,13 +200,13 @@ void OneDimensionalFV::WriteResults(int iTime){
         << std::setw(width) << std::left << "Velocity"
         << std::setw(width) << std::left << "Pressure"
         << std::setw(width) << std::left << "Energy" << "\n";
-    file << std::scientific << std::setw(10) << std::setprecision(3);
+    file << std::scientific << std::setw(width) << std::setprecision(4);
     for (int i = 1; i < nPointsHalo-1; ++i) {
-        file << std::setw(width) << x[i]
-             << std::setw(width) << rho[i]
-             << std::setw(width) << u[i]
-             << std::setw(width) << p[i]
-             << std::setw(width) << e[i] << "\n";
+        file << std::setw(width) << x.at(i)
+             << std::setw(width) << rho.at(i)
+             << std::setw(width) << u.at(i)
+             << std::setw(width) << p.at(i)
+             << std::setw(width) << e.at(i) << "\n";
     }
     
     file.close();
