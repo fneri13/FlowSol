@@ -7,7 +7,7 @@
                 "/opt/homebrew/Cellar/libomp",
                 "/opt/homebrew/Cellar/libomp/19.1.0/include"
             ],
-            "compilerPath": "/opt/homebrew/bin/g++-14",
+            "compilerPath": "/usr/bin/g++",
             "cStandard": "${default}",
             "cppStandard": "${default}",
             "intelliSenseMode": "macos-clang-arm64",
